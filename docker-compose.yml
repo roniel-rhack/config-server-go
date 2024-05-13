@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  config-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8888:3000"
