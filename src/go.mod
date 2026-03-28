@@ -1,6 +1,6 @@
 module configTest
 
-go 1.23
+go 1.25
 
 require (
 	github.com/charmbracelet/lipgloss v0.10.0
