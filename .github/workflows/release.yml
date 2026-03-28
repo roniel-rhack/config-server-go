@@ -96,9 +96,10 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Download all artifacts
+    - name: Download build artifacts
       uses: actions/download-artifact@v4
       with:
+        pattern: config-server-*
         path: dist/
         merge-multiple: true
 
