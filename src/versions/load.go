@@ -12,7 +12,11 @@ func LoadAvailableVersions() models.AvailableVersions {
 	files, err := os.ReadDir(configFolder)
 
 	if err != nil {
-		clog.Error("Error getting available versions from folder:%s", configFolder)
+		clog.Error("Error getting available versions from folder: %s", configFolder)
+		return models.AvailableVersions{
+			Current:   getVersionStruct(viper.GetString("CURRENT_VERSION")),
+			Available: []models.Version{},
+		}
 	}
 
 	var available []string
@@ -32,6 +36,10 @@ func LoadAvailableVersions() models.AvailableVersions {
 		versions = append(versions, v)
 	}
 
+	if versions == nil {
+		versions = []models.Version{}
+	}
+
 	return models.AvailableVersions{
 		Current:   getVersionStruct(viper.GetString("CURRENT_VERSION")),
 		Available: versions,
@@ -39,21 +47,26 @@ func LoadAvailableVersions() models.AvailableVersions {
 }
 
 func getVersionStruct(version string) models.Version {
+	if version == "" {
+		return models.Version{Files: []string{}}
+	}
+
 	versionFolderPath := viper.GetString("CONFIG_FOLDER") + version
 	versionFiles, err := os.ReadDir(versionFolderPath)
 	if err != nil {
 		clog.Error("Error getting files from folder: %s", versionFolderPath)
+		return models.Version{
+			Version: version,
+			Folder:  versionFolderPath,
+			Files:   []string{},
+		}
 	}
-	var filesInDir []string
+
+	filesInDir := []string{}
 	for _, file := range versionFiles {
 		if !file.IsDir() {
 			filesInDir = append(filesInDir, file.Name())
 		}
-	}
-
-	if len(filesInDir) == 0 {
-		clog.Warn("No files found in version folder: %s", versionFolderPath)
-		filesInDir = []string{}
 	}
 
 	return models.Version{

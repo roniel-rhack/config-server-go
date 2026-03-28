@@ -25,35 +25,27 @@ func NewStreamEvaluator() StreamEvaluator {
 }
 
 func (s *streamEvaluator) EvaluateFilesAndReturnMap(filenames []string, printer Parser, decoder Decoder) (map[string]string, error) {
-	var totalProcessDocs uint
-
 	results := make(map[string]string)
 
 	for _, filename := range filenames {
 		clog.Info("Reading file: %s", filename)
 		reader, err := readStream(filename)
-
 		if err != nil {
 			return results, err
 		}
-		processedDocs, res, err := s.EvaluateAndReturnMap(filename, reader, printer, decoder)
+
+		_, res, err := s.EvaluateAndReturnMap(filename, reader, printer, decoder)
 		if err != nil {
+			reader.Close()
 			return results, err
 		}
-		totalProcessDocs = totalProcessDocs + processedDocs
 
-		// append the results to the map
 		for key, value := range res {
 			results[key] = value
 		}
 
 		reader.Close()
 	}
-
-	//if totalProcessDocs == 0 {
-	//	// problem is I've already slurped the leading content sadface
-	//	return s.EvaluateNew(expression, printer)
-	//}
 
 	return results, nil
 }
@@ -72,7 +64,7 @@ func (s *streamEvaluator) EvaluateAndReturnMap(filename string, reader io.Reader
 		candidateNode, errorReading := decoder.Decode()
 
 		if errors.Is(errorReading, io.EOF) {
-			s.fileIndex = s.fileIndex + 1
+			s.fileIndex++
 			return currentIndex, results, nil
 		} else if errorReading != nil {
 			return currentIndex, results, fmt.Errorf("bad file '%v': %w", filename, errorReading)
@@ -85,15 +77,15 @@ func (s *streamEvaluator) EvaluateAndReturnMap(filename string, reader io.Reader
 		inputList.PushBack(candidateNode)
 
 		result := Context{MatchingNodes: inputList}
-		resultsToMap, errorReading := printer.ResultsToMap(result.MatchingNodes)
+		resultsToMap, mapErr := printer.ResultsToMap(result.MatchingNodes)
 
-		if errorReading != nil {
-			return currentIndex, results, err
+		if mapErr != nil {
+			return currentIndex, results, mapErr
 		}
-		// append the results to the map
+
 		for key, value := range resultsToMap {
 			results[key] = value
 		}
-		currentIndex = currentIndex + 1
+		currentIndex++
 	}
 }

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-var LOG *log.Logger
+var LOG = log.New(os.Stderr)
 
 func Initialize() {
 

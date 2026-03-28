@@ -11,17 +11,12 @@ type Parser interface {
 }
 
 type resultsParser struct {
-	encoder           Encoder
-	firstTimePrinting bool
-	previousDocIndex  uint
-	previousFileIndex int
-	printedMatches    bool
+	encoder Encoder
 }
 
 func NewParser(encoder Encoder) Parser {
 	return &resultsParser{
-		encoder:           encoder,
-		firstTimePrinting: true,
+		encoder: encoder,
 	}
 }
 
@@ -31,19 +26,6 @@ func (p *resultsParser) ResultsToMap(matchingNodes *list.List) (map[string]strin
 	if matchingNodes.Len() == 0 {
 		clog.Debug("no matching results, nothing to print")
 		return results, nil
-	}
-
-	if !p.encoder.CanHandleAliases() {
-		context := Context{MatchingNodes: matchingNodes}
-
-		matchingNodes = context.MatchingNodes
-	}
-
-	if p.firstTimePrinting {
-		node := matchingNodes.Front().Value.(*CandidateNode)
-		p.previousDocIndex = node.GetDocument()
-		p.previousFileIndex = node.GetFileIndex()
-		p.firstTimePrinting = false
 	}
 
 	for el := matchingNodes.Front(); el != nil; el = el.Next() {

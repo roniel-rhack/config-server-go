@@ -78,27 +78,15 @@ func AddVersion(c *fiber.Ctx) error {
 		})
 	}
 
-	if version.Version == viper.GetString("CURRENT_VERSION") {
-		return c.Status(200).JSON(models.WebSuccess{
-			Success: "Version already set",
-		})
-	}
+	version.Version = strings.ReplaceAll(version.Version, " ", "_")
 
-	found := false
 	for _, v := range viper.GetStringSlice("AVAILABLE_VERSIONS") {
 		if v == version.Version {
-			found = true
-			break
+			return c.Status(400).JSON(models.WebError{
+				Error: "Version already available",
+			})
 		}
 	}
-
-	if found {
-		return c.Status(400).JSON(models.WebError{
-			Error: "Version already available",
-		})
-	}
-
-	version.Version = strings.ReplaceAll(version.Version, " ", "_")
 
 	versionPath := viper.GetString("CONFIG_FOLDER") + version.Version + "/"
 

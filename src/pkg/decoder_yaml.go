@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"regexp"
 	"strings"
@@ -132,7 +133,9 @@ func (dec *yamlDecoder) Decode() (*CandidateNode, error) {
 	}
 
 	candidateNode := CandidateNode{document: dec.documentIndex}
-	// don't bother with the DocumentNode
+	if len(yamlNode.Content) == 0 {
+		return nil, fmt.Errorf("empty YAML document at index %v", dec.documentIndex)
+	}
 	err = candidateNode.UnmarshalYAML(yamlNode.Content[0], dec.anchorMap)
 	if err != nil {
 		return nil, err

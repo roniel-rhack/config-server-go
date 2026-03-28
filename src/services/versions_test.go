@@ -258,14 +258,15 @@ func TestAddVersion_AlreadyCurrent(t *testing.T) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		t.Errorf("expected status 200, got %d", resp.StatusCode)
+	// v1 is already in the available list, so it should return 400
+	if resp.StatusCode != 400 {
+		t.Errorf("expected status 400, got %d", resp.StatusCode)
 	}
 
 	var body map[string]string
 	json.NewDecoder(resp.Body).Decode(&body)
-	if body["success"] != "Version already set" {
-		t.Errorf("expected 'Version already set', got %q", body["success"])
+	if body["error"] != "Version already available" {
+		t.Errorf("expected 'Version already available', got %q", body["error"])
 	}
 }
 
