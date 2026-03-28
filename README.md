@@ -4,6 +4,7 @@
 
 [![Go Version](https://img.shields.io/badge/Go-1.25-00ADD8?logo=go&logoColor=white)](https://go.dev/)
 [![CI](https://github.com/roniel-rhack/config-server-go/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/roniel-rhack/config-server-go/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/roniel-rhack/config-server-go)](https://github.com/roniel-rhack/config-server-go/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
@@ -25,24 +26,47 @@ Config Server Go is a centralized configuration management microservice that ser
 
 ---
 
-## Quick Start
+## Installation
 
-### Option A: Run with Go
+### Pre-built binaries
+
+Download the latest binary from the [Releases](https://github.com/roniel-rhack/config-server-go/releases/latest) page:
+
+| Platform | Binary |
+|----------|--------|
+| Linux (amd64) | `config-server-linux-amd64` |
+| Linux (arm64) | `config-server-linux-arm64` |
+| macOS (Apple Silicon) | `config-server-darwin-arm64` |
+| macOS (Intel) | `config-server-darwin-amd64` |
+| Windows | `config-server-windows-amd64.exe` |
+
+```bash
+chmod +x config-server-*
+./config-server-linux-amd64
+```
+
+### Docker image
+
+```bash
+docker pull ghcr.io/roniel-rhack/config-server-go:1
+```
+
+```bash
+docker run -p 8888:8888 ghcr.io/roniel-rhack/config-server-go:1
+```
+
+### From source
 
 ```bash
 cd src
 go run config_server.go
 ```
 
+---
+
+## Quick Start
+
 The server starts on [http://localhost:8888](http://localhost:8888) by default.
-
-### Option B: Run with Docker
-
-```bash
-docker compose up --build
-```
-
-Verify it is running:
 
 ```bash
 curl http://localhost:8888/health
@@ -342,16 +366,14 @@ docker compose up --build
 
 The default `docker-compose.yml` maps port `8888:8888`.
 
-### Mounting a Configuration Volume
-
-To provide your own config and version directories:
+### Using the published image
 
 ```bash
 docker run -d \
   -p 8888:8888 \
   -v ./config.yaml:/opt/packages/config-server/config.yaml \
   -v ./configs:/opt/packages/config-server/configs \
-  config-server-go
+  ghcr.io/roniel-rhack/config-server-go:1
 ```
 
 ---
@@ -395,6 +417,14 @@ The GitHub Actions workflow (`.github/workflows/ci.yml`) runs on pushes and pull
 
 **Docker job** — runs after the build job passes:
 - Builds the Docker image to verify the `Dockerfile` is valid
+
+### Release workflow (`.github/workflows/release.yml`)
+
+Triggered on version tags (`v*`):
+
+- Builds static binaries for Linux, macOS, and Windows (amd64/arm64)
+- Builds and pushes a Docker image to `ghcr.io/roniel-rhack/config-server-go`
+- Creates a GitHub Release with all binaries and checksums
 
 ---
 
