@@ -7,13 +7,23 @@ import (
 	"configTest/utils"
 	"github.com/gofiber/fiber/v2"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 func GetConfigFile(c *fiber.Ctx) error {
 
 	filename := c.Params("filename")
 
-	filePath := utils.GetCurrentVersionPath() + filename
+	basePath := utils.GetCurrentVersionPath()
+	filePath := filepath.Join(basePath, filename)
+
+	// Prevent path traversal
+	if !strings.HasPrefix(filepath.Clean(filePath), filepath.Clean(basePath)) {
+		return c.Status(400).JSON(models.WebError{
+			Error: "Invalid filename",
+		})
+	}
 
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		return c.Status(404).JSON(models.WebError{

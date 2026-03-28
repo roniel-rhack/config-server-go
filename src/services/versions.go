@@ -55,7 +55,7 @@ func SetVersion(c *fiber.Ctx) error {
 	if err != nil {
 		clog.Error("Error saving config: %s", err.Error())
 		return c.Status(500).JSON(models.WebError{
-			Error: "Error saving config: " + err.Error(),
+			Error: "Error saving config",
 		})
 	}
 
@@ -106,7 +106,7 @@ func AddVersion(c *fiber.Ctx) error {
 	if err != nil {
 		clog.Error("Error creating folder: %s", versionPath)
 		return c.Status(500).JSON(models.WebError{
-			Error: "Error creating folder: " + err.Error(),
+			Error: "Error creating folder",
 		})
 	}
 
@@ -116,7 +116,7 @@ func AddVersion(c *fiber.Ctx) error {
 	if err != nil {
 		clog.Error("Error saving config: %s", err.Error())
 		return c.Status(500).JSON(models.WebError{
-			Error: "Error saving config: " + err.Error(),
+			Error: "Error saving config",
 		})
 	}
 
@@ -161,9 +161,9 @@ func DeleteVersion(ctx *fiber.Ctx) error {
 
 	err := os.RemoveAll(versionPath)
 	if err != nil {
-		clog.Error("Error deleting folder:%s", versionPath)
+		clog.Error("Error deleting folder: %s", versionPath)
 		return ctx.Status(500).JSON(models.WebError{
-			Error: "Error deleting folder: " + err.Error(),
+			Error: "Error deleting folder",
 		})
 	}
 
@@ -171,9 +171,9 @@ func DeleteVersion(ctx *fiber.Ctx) error {
 
 	err = viper.WriteConfig()
 	if err != nil {
-		clog.Error("Error saving config:%s", err.Error())
+		clog.Error("Error saving config: %s", err.Error())
 		return ctx.Status(500).JSON(models.WebError{
-			Error: "Error saving config: " + err.Error(),
+			Error: "Error saving config",
 		})
 	}
 

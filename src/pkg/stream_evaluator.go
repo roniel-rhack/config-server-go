@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 )
 
 // A yaml expression evaluator that runs the expression multiple times for each given yaml document.
@@ -48,10 +47,7 @@ func (s *streamEvaluator) EvaluateFilesAndReturnMap(filenames []string, printer 
 			results[key] = value
 		}
 
-		switch reader := reader.(type) {
-		case *os.File:
-			safelyCloseFile(reader)
-		}
+		reader.Close()
 	}
 
 	//if totalProcessDocs == 0 {

@@ -15,7 +15,7 @@ func LoadAvailableVersions() models.AvailableVersions {
 		clog.Error("Error getting available versions from folder:%s", configFolder)
 	}
 
-	available := viper.GetStringSlice("AVAILABLE_VERSIONS")[:0]
+	var available []string
 
 	for _, file := range files {
 		if file.IsDir() {

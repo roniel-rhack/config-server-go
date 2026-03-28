@@ -8,21 +8,29 @@ import (
 	"strings"
 )
 
-func readStream(filename string) (io.Reader, error) {
-	var reader *bufio.Reader
-	if filename == "-" {
-		reader = bufio.NewReader(os.Stdin)
-	} else {
-		// ignore CWE-22 gosec issue - that's more targeted for http based apps that run in a public directory,
-		// and ensuring that it's not possible to give a path to a file outside that directory.
-		file, err := os.Open(filename) // #nosec
-		if err != nil {
-			return nil, err
-		}
-		reader = bufio.NewReader(file)
-	}
-	return reader, nil
+type readCloser struct {
+	io.Reader
+	closer io.Closer
+}
 
+func (rc *readCloser) Close() error {
+	if rc.closer != nil {
+		return rc.closer.Close()
+	}
+	return nil
+}
+
+func readStream(filename string) (*readCloser, error) {
+	if filename == "-" {
+		return &readCloser{Reader: bufio.NewReader(os.Stdin)}, nil
+	}
+	// ignore CWE-22 gosec issue - that's more targeted for http based apps that run in a public directory,
+	// and ensuring that it's not possible to give a path to a file outside that directory.
+	file, err := os.Open(filename) // #nosec
+	if err != nil {
+		return nil, err
+	}
+	return &readCloser{Reader: bufio.NewReader(file), closer: file}, nil
 }
 
 func writeString(writer io.Writer, txt string) error {
