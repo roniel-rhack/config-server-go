@@ -6,9 +6,9 @@ require (
 	github.com/charmbracelet/lipgloss v0.10.0
 	github.com/charmbracelet/log v0.4.0
 	github.com/fatih/color v1.16.0
+	github.com/fsnotify/fsnotify v1.7.0
 	github.com/goccy/go-yaml v1.11.3
 	github.com/gofiber/fiber/v2 v2.52.4
-	github.com/joho/godotenv v1.5.1
 	github.com/magiconair/properties v1.8.7
 	github.com/spf13/viper v1.18.2
 	gopkg.in/yaml.v3 v3.0.1
@@ -17,7 +17,6 @@ require (
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
-	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect

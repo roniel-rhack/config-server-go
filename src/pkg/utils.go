@@ -33,8 +33,7 @@ func writeString(writer io.Writer, txt string) error {
 func safelyCloseFile(file *os.File) {
 	err := file.Close()
 	if err != nil {
-		clog.Error("Error closing file!")
-		clog.Error(err.Error())
+		clog.Error("Error closing file: %s", err.Error())
 	}
 }
 

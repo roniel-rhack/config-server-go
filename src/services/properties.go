@@ -59,7 +59,7 @@ func getConfig(filePath string) map[string]string {
 	result, err := streamEvaluator.EvaluateFilesAndReturnMap(args, parser, lib.YamlFormat.DecoderFactory())
 
 	if err != nil {
-		clog.Error(err.Error())
+		clog.Error("error evaluating files: %s", err.Error())
 	}
 
 	return result

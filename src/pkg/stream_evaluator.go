@@ -31,7 +31,7 @@ func (s *streamEvaluator) EvaluateFilesAndReturnMap(filenames []string, printer 
 	results := make(map[string]string)
 
 	for _, filename := range filenames {
-		clog.Info("Reading file: " + filename)
+		clog.Info("Reading file: %s", filename)
 		reader, err := readStream(filename)
 
 		if err != nil {
